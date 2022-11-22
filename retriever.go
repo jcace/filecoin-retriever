@@ -29,7 +29,6 @@ func NewRetriever(ctx context.Context, lotusString string) (*filclient.Client, f
 
 	// Connect to lotus node - this can be a lite node
 	api, closer, err := LotusConnection(lotusString)
-	defer closer()
 	if err != nil {
 		log.Fatalf("could not connect to lotus")
 	}
