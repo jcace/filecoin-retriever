@@ -15,7 +15,7 @@ import (
 	"github.com/libp2p/go-libp2p"
 )
 
-func NewRetriever(ctx context.Context, lotusString string) *filclient.Client {
+func NewRetriever(ctx context.Context, lotusString string) (*filclient.Client, func()) {
 	// Instantiate libp2p node
 	node, err := libp2p.New(
 		libp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/0"),
@@ -23,7 +23,6 @@ func NewRetriever(ctx context.Context, lotusString string) *filclient.Client {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer node.Close()
 
 	// print the node's listening addresses
 	fmt.Println("Listen addresses:", node.Addrs())
@@ -65,7 +64,11 @@ func NewRetriever(ctx context.Context, lotusString string) *filclient.Client {
 
 	fmt.Printf("fc: %v\n", fc)
 
-	return fc
+	return fc, func() {
+		fmt.Println("closing connections")
+		node.Close()
+		closer()
+	}
 }
 
 func DoRetrieval(ctx context.Context, fc *filclient.Client, c string, mid string) {

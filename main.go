@@ -23,7 +23,8 @@ func main() {
 				return cli.Exit("missing FULLNODE_API_INFO env var", 1)
 			}
 
-			fc := NewRetriever(cctx.Context, apiInfo)
+			fc, closer := NewRetriever(cctx.Context, apiInfo)
+			defer closer()
 			DoRetrieval(cctx.Context, fc, cid, spid)
 			return nil
 		},
